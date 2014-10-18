@@ -21,9 +21,10 @@ def main(time_before_new_changed=300):
     done_links_filename = os.path.join(
             '..', 'data', 'links', 'done_links.txt')
     while True:
-        # Function scrape_links() has its own timer, but we need one here lest 
-        # too few new links are available when we scrape. The same time-cycle 
-        # is used here as in scrape_links(), so this timer serves as back-up.
+        # Use back-up timer here. Function scrape_links() has its own, but we 
+        # need one here lest too few new links are available when we scrape and
+        # we end up scraping Special:RecentChanges too often. The same 
+        # timing is used here as in scrape_links().
         start_time = time.time()
         if input('Proceed? (require "yes"): ') != 'yes':
             print('Exiting.')
