@@ -8,8 +8,6 @@
 # To-do: Links containing "redlink=1" link to pages that do not yet exist. 
 # Are we sure they are not being scraped?
 
-# In future, on "HTTP Error 404" we should perhaps discard the link instead of tossing it back for future use.
-
 import utils as U
 import scrape as S
 import os
