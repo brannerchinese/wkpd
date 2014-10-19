@@ -139,7 +139,10 @@ def scrape_links(time_before_new_changed, title=None, links=None,
         except TypeError:
             # TypeError: 'NoneType' object is not iterable
             # Usually because "HTTP Error 404: Not Found", so restore title.
-            links.add(title)
+            # But temporarily we are leaving titles unrestored, as we think
+            # some of these were previously unfiltered `redlink=1"
+            # cases.
+#            links.add(title)
             try:
                 done_links.remove(title)
             except KeyError:
