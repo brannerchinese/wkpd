@@ -1,12 +1,18 @@
 #! /usr/bin/env python
 # crawl.py
 # David Prager Branner
-# 20141019
+# 20141020
 
 """Crawl the Chinese subdomain of Wikipedia; collect links, synonym metadata."""
 
 # To-do: Links containing "redlink=1" link to pages that do not yet exist. 
 # Are we sure they are not being scraped?
+
+# Do logging of errors
+
+# Add all data to .gitignore — transfer by sftp.
+
+# Implement interlanguage links.
 
 import utils as U
 import scrape as S
@@ -41,6 +47,8 @@ def main(time_before_new_changed=300):
         print('Links saved in main loop.')
         while time.time() < start_time + time_before_new_changed:
             time.sleep(1)
+        link = get_recent_changes(links, done_links)
+        links = get_random_link(links)
         print('Continuing main loop.')
 
 def get_unscraped_links(unscraped_links_filename, done_links):
@@ -60,10 +68,7 @@ def get_unscraped_links(unscraped_links_filename, done_links):
         print('Retrieved {} links from "Special:RecentChanges".'.
                 format(len(links)))
     # If these have all been done already, get random link.
-    #     https://zh.wikipedia.org/wiki/Special:Random
-    if links == set():
-        links = {'Special:Random'}
-        print('Turning to "Special:Random".')
+    links = get_random_link(links)
     if '' in links:
         links.remove('')
     return links
@@ -78,6 +83,13 @@ def get_recent_changes(links, done_links):
     len(recent_links)
     print('Retrieved {} links from "Special:RecentChanges"; {} of which new.'.
             format(starting_recent_links_num, len(recent_links)))
+    return links
+
+def get_random_link(links):
+    # Source: https://zh.wikipedia.org/wiki/Special:Random
+    if links == set():
+        links = {'Special:Random'}
+        print('Turning to "Special:Random".')
     return links
 
 def get_done_links(done_links_filename):
@@ -175,18 +187,17 @@ def scrape_links(time_before_new_changed, title=None, links=None,
                     title))
         # Uncomment the following line to save whole pages (compressed).
         # _ = U.store_data(page, title, target_dir='html_new', tar=True)
-        # Write the whole of "links": "title" removed, "new_links" added.
-        try:
-            with open(unscraped_links_filename, 'w') as f:
-                f.write('\n'.join(links))
-        except KeyboardInterrupt:
-            print('''\nWe met with KeyboardInterrupt; title: {}. '''.
-                    format(title))
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_exception(exc_type, exc_value, exc_traceback)
-            return links, done_links
-#        time.sleep(.5)
-    return links, done_links
+#         # Write the whole of "links": "title" removed, "new_links" added.
+#         try:
+#             with open(unscraped_links_filename, 'w') as f:
+#                 f.write('\n'.join(links))
+#         except KeyboardInterrupt:
+#             print('''\nWe met with KeyboardInterrupt; title: {}. '''.
+#                     format(title))
+#             exc_type, exc_value, exc_traceback = sys.exc_info()
+#             traceback.print_exception(exc_type, exc_value, exc_traceback)
+#             return links, done_links
+#     return links, done_links
 
 if __name__ == '__main__':
     main()
